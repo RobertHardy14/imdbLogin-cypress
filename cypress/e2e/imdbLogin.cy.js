@@ -1,16 +1,33 @@
 /// <reference types = "cypress"/> 
 
+import { LandingPage } from "../page-objects/landing-page"
+import { SignIn } from "../page-objects/sign-in"
+
+const landing = new LandingPage
+const signIn = new SignIn
+
 describe('IMDB Login Cypress', () => {
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Commenting this out to make sure we logout at the end of the test execution
+
+  // before(function () {
+  //   landing.goToPage()
+  //   landing.logOut()
+  // })
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
   before(function () {
-    cy.visit('https://www.imdb.com/')
-    cy.get('.imdb-header__account-toggle--logged-in')
-      .contains('Roberto')
-      .click()
-    cy.get('.ipc-list-item__text')
-      .contains('Sign out')
-      .should('exist')
-      .click()
+    landing.goToPage()
+    landing.verifyLogOut()
+  })
+
+  after(function () {
+    landing.logOut()
+    landing.verifyLogOut()
+    landing.backToHome()
   })
 
   afterEach(function () {
@@ -20,46 +37,28 @@ describe('IMDB Login Cypress', () => {
   })
 
   it('Navigates to the imdb webpage', () => {
-    cy.visit('https://www.imdb.com/')
+    landing.goToPage()
   })
 
   it('Verifies it is on the imdb webpage', () => {
     // cy.visit('https://www.imdb.com/')
-    cy.title().should('have.string', 'IMDb: Ratings, Reviews, and Where to Watch the Best Movies & TV Shows')
-    cy.get('#home_img_holder').should('have.attr', 'href', '/?ref_=nv_home')
+    landing.verifyPage()
   })
 
   it('Click the Sign In button', () => {
     // cy.visit('https://www.imdb.com/')
-    cy.get('.imdb-header__signin-text').contains('Sign In')
-      .click()
+    landing.clickSignIn()
   })
 
   it('Verify we are in the Sign In Page', () => {
-    cy.title().should('have.string', 'Sign in with IMDb - IMDb')
+    signIn.verifyPage()
   })
 
   it('Enter Login Credentials', () => {
-    cy.get('.auth-provider-text')
-      .contains('Sign in with IMDb')
-      .click()
-    cy.title()
-      .should('have.string', 'IMDb Sign-In')
-    cy.get('#ap_email')
-      .click()
-      .type(Cypress.env('username'))
-    cy.get('#ap_password')
-      .click()
-      .type(Cypress.env('password'))
-    cy.get('#signInSubmit')
-      .should('exist')
-      .click()
+    signIn.enterCredentials(Cypress.username, Cypress.password)
   })
 
   it('Search for a movie', () => {
-    cy.get('#suggestion-search')
-      .click()
-      .type('American Sniper {enter}')
+    landing.search()
   })
-
 })
