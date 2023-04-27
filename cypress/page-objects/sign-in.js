@@ -20,6 +20,4 @@ export class SignIn {
             .should('exist')
             .click()
     }
-
-
 }

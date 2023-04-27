@@ -5,3 +5,4 @@ node_modules
 support
 screenshots
 fixtures
+cypress.config.js
